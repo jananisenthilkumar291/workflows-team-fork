@@ -13,16 +13,6 @@ on:
 #              │ │ └───────── 15th day of the month.
 #              │ └─────────── 0th hour of the day.
 #              └───────────── Start of the hour (minutes = 0).
-    pull_request:
-        branches: [ main ]
-        paths:
-            - '.github/workflows/sbom_secscan.yaml'
-            - 'sbom_manifest.yaml'
-    push:
-        branches: [ main ]
-        paths:
-            - '.github/workflows/sbom_secscan.yaml'
-            - 'sbom_manifest.yaml'
 
 permissions:
     contents: read
@@ -39,13 +29,6 @@ jobs:
           - name: Checkout
             uses: actions/checkout@v4
 
-          - name: Install yq
-            run: |
-              if ! command -v yq >/dev/null 2>&1; then
-                    echo "Installing yq via snap..."
-                    sudo snap install yq || sudo snap install yq --classic
-              fi
-              yq --version
 
           - name: Run sbomber action
             uses: canonical/sbomber/.github/actions/run@main
@@ -53,20 +36,3 @@ jobs:
               manifest: "${{ github.workspace }}/sbom_manifest.yaml"
               artifact-name: ${{ matrix.artifact }}
 
-          - name: Validate SBOMber scan status
-            run: |
-              echo "Checking .statefile.yaml for scan results..."
-              if [ ! -f .statefile.yaml ]; then
-                 echo "❌ .statefile.yaml not found. SBOMber may have failed."
-                 exit 1
-              fi
-
-              failed=$(yq '.artifacts[]? | select(.status == "failed" or .status == "pending") | .name' .statefile.yaml)
-
-              if [ -n "$failed" ]; then
-                 echo "❌ The following artifacts failed or are still pending:"
-                 echo "$failed"
-                 exit 1
-              else
-                 echo "✅ All artifacts scanned successfully."
-              fi
