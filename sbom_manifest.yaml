@@ -5,7 +5,7 @@ clients:
   sbom:
     department: charm_engineering
     email: janani.senthilkumar@canonical.com  # tradition
-    team: workflows
+    team: analytics
   secscan: {}
 
 artifacts:
