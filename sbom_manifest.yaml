@@ -9,14 +9,14 @@ clients:
   secscan: {}
 
 artifacts:
-  - name: temporal-k8s-operator
+  - name: temporal-k8s
     type: charm
 
-  - name: temporal-ui-k8s-operator
+  - name: temporal-ui-k8s
     type: charm
 
-  - name: temporal-worker-operator
+  - name: temporal-worker-k8s
     type: charm
   
-  - name: temporal-admin-k8s-operator
+  - name: temporal-admin-k8s
     type: charm 
