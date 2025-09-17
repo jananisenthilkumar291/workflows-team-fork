@@ -1,6 +1,5 @@
 ## this file contains the workflow CI runner for SBOM and secscan
 
-
 name: SSDLC scanning
 
 on:
@@ -13,6 +12,8 @@ on:
 #              │ │ └───────── 15th day of the month.
 #              │ └─────────── 0th hour of the day.
 #              └───────────── Start of the hour (minutes = 0).
+
+# TODO: Temporary triggers added to validate CI on first PR. Remove them after first merge to avoid unnecessary runs in subsequent PRs.
     pull_request:
       branches: [ main ]
       paths:
@@ -37,11 +38,8 @@ jobs:
         steps:
           - name: Checkout
             uses: actions/checkout@v4
-
-
           - name: Run sbomber action
             uses: canonical/sbomber/.github/actions/run@main
             with:
               manifest: "${{ github.workspace }}/sbom_manifest.yaml"
               artifact-name: ${{ matrix.artifact }}
-

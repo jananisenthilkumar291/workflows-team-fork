@@ -1,6 +1,5 @@
 # workflows-team
 
-
 This repository consolidates common tooling, templates, and automation used across the Canonical workflows team. It supports secure artifact delivery, SBOM generation, CI/CD standardization, and SSDLC-aligned compliance workflows
 
 ### Automation
