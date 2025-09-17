@@ -1,0 +1,53 @@
+## this file contains the workflow CI runner for SBOM and secscan
+
+
+name: SSDLC scanning
+
+on:
+    workflow_dispatch:
+    schedule:
+      - cron: "0 0 15 3,9 *"
+#              │ │ │  │    │
+#              │ │ │  │    └─ any day of the week.
+#              │ │ │  └────── 3rd and 9th month (April & October).
+#              │ │ └───────── 15th day of the month.
+#              │ └─────────── 0th hour of the day.
+#              └───────────── Start of the hour (minutes = 0).
+
+jobs:
+    scan:
+        runs-on: [self-hosted, self-hosted-linux-amd64-jammy-private-endpoint-medium]
+        strategy:
+          fail-fast: false
+          matrix:
+            type: [sbom, secscan]
+            artifact: [charm]
+
+        name: SSDLC scanning - ${{ matrix.type }} - ${{ matrix.artifact }} artifacts
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+          - name: Run sbomber action
+            uses: canonical/sbomber/.github/actions/run@main
+            with:
+              manifest: "${{ github.workspace }}/sbom-manifest.yaml"
+              artifact-name: ${{ matrix.artifact }}-${{ matrix.type }}
+
+          - name: Validate SBOMber scan status
+            run: |
+              echo "Checking .statefile.yaml for scan results..."
+              if [ ! -f .statefile.yaml ]; then
+                 echo "❌ .statefile.yaml not found. SBOMber may have failed."
+                 exit 1
+              fi
+
+              failed=$(yq '.artifacts[] | select(.status == "failed" or .status == "pending") | .name' .statefile.yaml)
+
+              if [ -n "$failed" ]; then
+                 echo "❌ The following artifacts failed or are still pending:"
+                 echo "$failed"
+                 exit 1
+              else
+                 echo "✅ All artifacts scanned successfully."
+              fi
+

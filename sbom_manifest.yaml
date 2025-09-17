@@ -1,0 +1,22 @@
+# run secscan using the sbomber tool on all our charms
+# this manifest is used in `.github/workflows/charm-sbom.yaml`
+
+clients:
+  sbom:
+    department: charm_engineering
+    email: janani.senthilkumar@canonical.com  # tradition
+    team: workflows
+  secscan: {}
+
+artifacts:
+  - name: temporal-k8s-operator
+    type: charm
+
+  - name: temporal-ui-k8s-operator
+    type: charm
+
+  - name: temporal-worker-operator
+    type: charm
+  
+  - name: temporal-admin-k8s-operator
+    type: charm 
