@@ -12,20 +12,6 @@ on:
 #              │ │ └───────── 15th day of the month.
 #              │ └─────────── 0th hour of the day.
 #              └───────────── Start of the hour (minutes = 0).
-
-# TODO: Temporary triggers added to validate CI on first PR. Remove them after first merge to avoid unnecessary runs in subsequent PRs.
-    pull_request:
-      branches: [ main ]
-      paths:
-        - '.github/workflows/sbom_secscan.yaml'
-        - 'sbom_manifest.yaml'
-    push:
-      branches: [ main ]
-      paths: 
-        - '.github/workflows/sbom_secscan.yaml'
-        - 'sbom_manifest.yaml'
-permissions:
-    contents: read
 jobs:
     scan:
         runs-on: [self-hosted, self-hosted-linux-amd64-jammy-private-endpoint-medium]
@@ -41,5 +27,11 @@ jobs:
           - name: Run sbomber action
             uses: canonical/sbomber/.github/actions/run@main
             with:
-              manifest: "${{ github.workspace }}/sbom_manifest.yaml"
+              manifest: "${{ github.workspace }}/sbom_secscan_manifest.yaml"
               artifact-name: ${{ matrix.artifact }}
+          - name: Notify team on scheduled failure
+            if: failure() && github.event_name == 'schedule'
+            uses: mattermost/action-mattermost-notify@master
+            with:
+              MATTERMOST_WEBHOOK_URL: $${{ secrets.MATTERMOST_WEBHOOK_URL }}
+              TEXT: SSDLC scheduled scan failed for `${{ matrix.artifact }}` in [$${{ github.repository }}]($${{ github.server_url }}/$${{ github.repository }}/actions/runs/$${{ github.run_id }})
