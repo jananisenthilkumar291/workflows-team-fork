@@ -7,10 +7,9 @@
 ## Testing instructions
 <!-- Steps to manually test the changes and the expected results, only if applicable -->
 <!-- Example:
-1. Build charm locally or via CI
-2. Verify SBOM is generatred correctly
-3. Confirm secscan results are uploaded or logged
-4. Check github actions workflow status and logs
+1. Verify SBOM is generatred correctly
+2. Confirm secscan results are uploaded or logged
+3. Check github actions workflow status and logs
 -->
 
 ## Notes for Reviewers (optional)
